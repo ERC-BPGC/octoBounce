@@ -13,6 +13,7 @@ import time
 from collections import deque
 import rospy
 from geometry_msgs.msg import Twist
+import math
 
 orange_lower = (10, .4*255, .6*255)
 orange_upper = (30, .8* 255, 1 *255)
@@ -43,11 +44,13 @@ def ballInfo():
 		xUnder = 0
 		yUnder = 0
 		highest = 0
+		v1 = 0
+		velocity = 0
 
 		while True:
 
-			(grabberUnder, frameUnder) = cameraUnder.read()
-			(grabberOver, frameOver) = cameraOver.read()
+			(_, frameUnder) = cameraUnder.read()
+			(_, frameOver) = cameraOver.read()
 
 			frameUnder = imutils.resize(frameUnder, width=600)
 			frameOver = imutils.resize(frameOver, width=600)
@@ -105,11 +108,10 @@ def ballInfo():
 				except IndexError:
 					continue
 				
-				# velocity = (zArr[-1] - zArr[-2]) / t1 - t2
 				t2 = t1	# Update t2 to calculate velocity in next iteration
 				# velocityArr.append(velocity)
 
-				ballParameter.angular.z = velocity * 0.026458333333333 
+				ballParameter.angular.z = velocity * 0.02645
 
 				if radiusOver > 10:
 					cv2.circle(frameOver, (int(xOver), int(yOver)), int(radiusOver),(0, 255, 255), 2)
@@ -124,13 +126,13 @@ def ballInfo():
 		
 				# otherwise, compute the thickness of the line and
 				# draw the connecting lines
-				thickness = int(np.sqrt(64 / float(i + 1)) * 2.5)
+				# thickness = int(np.sqrt(64 / float(i + 1)) * 2.5)
 				# cv2.line(frameUnder, ptsUnder[i - 1], ptsUnder[i], (0, 0, 255), thickness) # print the line for balls trajectory
 
 			for i in range(1, len(ptsOver)):
 				if ptsOver[i - 1] is None or ptsOver[i] is None:
 					continue
-				thickness = int(np.sqrt(64 / float(i + 1)) * 2.5)
+				# thickness = int(np.sqrt(64 / float(i + 1)) * 2.5)
 				# cv2.line(frameOver, ptsOver[i - 1], ptsOver[i], (0, 0, 255), thickness)
 				# print(xOver, yOver)
 			
@@ -142,11 +144,20 @@ def ballInfo():
 			if key == ord('q'):
 				break
 			
+			v2 = velocity
+			if v1 > 0 and v2 < 0:
+				highest = ballParameter.linear.z
+			v1 = v2
 
-			if velocity == highest - 0.098/2:
+			if round(ballParameter.linear.z, 2) == highest:
 				rospy.loginfo(ballParameter)
 				pub.publish(ballParameter)
-				rate.sleep()
+			
+			rate.sleep()
+
+			# rospy.loginfo(ballParameter)
+			# pub.publish(ballParameter)
+			# rate.sleep()
 			
 
 
