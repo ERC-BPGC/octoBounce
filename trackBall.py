@@ -1,4 +1,8 @@
 # https://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/
+
+
+# OpenCV code to track a balls trajectory along with its radius (in pixels)
+# Used to track the x and y position of the ball with a camera placed under it
 import numpy as np
 import cv2
 import imutils
@@ -8,9 +12,8 @@ orange_lower = (10, .4*255, .6*255)
 orange_upper = (30, .8* 255, 1 *255)
 pts = deque(maxlen=64)
 
-def poly(x):
+def poly(x):  # polynomial function to convert radius of ball to distance from camera
 	pol = -4.46*10**-6*x**4 + 0.0015*x**3 - 0.183*x**2 + 9.26*x -129.5
-
 	return pol
 
 def findAvg(x):
@@ -53,8 +56,7 @@ while True:
 
 	# loop over the set of tracked points
 	for i in range(1, len(pts)):
-		# if either of the tracked points are None, ignore
-		# them
+		# if either of the tracked points are None, ignore them
 		if pts[i - 1] is None or pts[i] is None:
 			continue
  
