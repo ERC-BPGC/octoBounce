@@ -22,7 +22,7 @@ def findAvg(x):
 
 radiusArr = [] 
 polyArr = []
-camera = cv2.VideoCapture(1)
+camera = cv2.VideoCapture(0)
 while True:
 
 	(grabber, frame) = camera.read()
@@ -61,7 +61,7 @@ while True:
 		# otherwise, compute the thickness of the line and
 		# draw the connecting lines
 		thickness = int(np.sqrt(64 / float(i + 1)) * 2.5)
-		# cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
+		# cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness) # print the line for balls trajectory
 		print(x, y, radius)
 
 		if(radius != 0 and poly(radius) != 0):
@@ -82,7 +82,7 @@ for x in radiusArr:
 
 	rsum = rsum + x
 
-print("radius = ", rsum/len(radiusArr))
+print("radius = ", rsum/len(radiusArr)) # Print the average radius over the complete video
 
 psum = 0
 for y in polyArr:
