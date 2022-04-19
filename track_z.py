@@ -75,7 +75,7 @@ while True:
 		cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness) # print the line for balls trajectory
 
 		z = y # y-coordinate of camera is z-coordinate in ball frame because of the orientation of camera
-		print(z)
+		# print(z)
 
 
 		# if(radius != 0 and poly(radius) != 0): # find moving average of the radius of the ball and the depth of the ball
