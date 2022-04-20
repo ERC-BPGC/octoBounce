@@ -102,9 +102,7 @@ while True:
 			cv2.circle(frameOver, (int(xOver), int(yOver)), int(radiusOver),(0, 255, 255), 2)
 			cv2.circle(frameOver, centerOver, 5, (0, 0, 255), -1)
 	ptsOver.appendleft(centerOver)
-
 	
-
 	# loop over the set of tracked points
 	for i in range(1, len(ptsUnder)):
 		# if either of the tracked points are None, ignore them
