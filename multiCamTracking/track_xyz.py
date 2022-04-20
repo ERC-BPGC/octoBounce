@@ -28,8 +28,8 @@ cameraOver = cv2.VideoCapture(1)
 # VideCapture(2) is webcam for the right side USB port of Dhruv's laptop - Camera to the side of the ball
 # Camera to the side of the ball will give us the z position of the ball in the frame of the Camera Under the ball
 
-zArr = [] # array to store consecutive z values
-velocityArr = []
+
+ballParameter = (x, y, zArr, velocityArr, radiusArr) = (0, 0, [], [], [])
 t2 = 0 # time to be updated each iteration
 
 while True:
