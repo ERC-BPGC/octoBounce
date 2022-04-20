@@ -21,13 +21,6 @@ ptsOver = deque(maxlen=64)
 # 	pol = -4.46*10**-6*x**4 + 0.0015*x**3 - 0.183*x**2 + 9.26*x -129.5
 # 	return pol
 
-# def findAvg(x):
-# 	avg = 0
-# 	for i in range(len(x)):
-# 		avg += x[i]
-# 	avg = avg/len(x)
-# 	return avg
-
 cameraUnder = cv2.VideoCapture(2)
 cameraOver = cv2.VideoCapture(1)
 # VideCapture(1) is webcam for the left side USB port of Dhruv's laptop - Camera Under the ball
@@ -90,7 +83,6 @@ while True:
 		x = xUnder
 		y = yUnder
 		z = yOver
-
 		zArr.append(z)
 
 		t1 = time.time()
@@ -102,7 +94,7 @@ while True:
 			cv2.circle(frameOver, (int(xOver), int(yOver)), int(radiusOver),(0, 255, 255), 2)
 			cv2.circle(frameOver, centerOver, 5, (0, 0, 255), -1)
 	ptsOver.appendleft(centerOver)
-	
+
 	# loop over the set of tracked points
 	for i in range(1, len(ptsUnder)):
 		# if either of the tracked points are None, ignore them
@@ -112,15 +104,8 @@ while True:
 		# otherwise, compute the thickness of the line and
 		# draw the connecting lines
 		thickness = int(np.sqrt(64 / float(i + 1)) * 2.5)
-		cv2.line(frameUnder, ptsUnder[i - 1], ptsUnder[i], (0, 0, 255), thickness) # print the line for balls trajectory
-		# print(xUnder, yUnder)
+		# cv2.line(frameUnder, ptsUnder[i - 1], ptsUnder[i], (0, 0, 255), thickness) # print the line for balls trajectory
 
-		# if(radius != 0 and poly(radius) != 0): # find moving average of the radius of the ball and the depth of the ball
-		# 	radiusArr.append(radius)
-		# 	polyArr.append(poly(radius))
-
-		# print(findAvg(radiusArr), findAvg(polyArr))
-		
 	for i in range(1, len(ptsOver)):
 		if ptsOver[i - 1] is None or ptsOver[i] is None:
 			continue
@@ -128,28 +113,12 @@ while True:
 		cv2.line(frameOver, ptsOver[i - 1], ptsOver[i], (0, 0, 255), thickness)
 		print(xOver, yOver)
 
-
 	# show the frame to our screen
 	cv2.imshow("FrameUnder", frameUnder)
 	cv2.imshow("FrameOver", frameOver)
 	key = cv2.waitKey(1) & 0xFF
 	if key == ord('q'):
 		break
-
-
-# rsum = 0
-# for x in radiusArr:
-
-# 	rsum = rsum + x
-
-# print("radius = ", rsum/len(radiusArr)) # Print the average radius over the complete video
-
-# psum = 0
-# for y in polyArr:
-# 	psum = psum + y
-
-# print("depth = ", psum/len(polyArr))
-
 
 cameraUnder.release()
 cameraOver.release()
