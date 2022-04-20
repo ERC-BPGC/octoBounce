@@ -25,7 +25,7 @@ def findAvg(x):
 
 radiusArr = [] 
 polyArr = []
-camera = cv2.VideoCapture(0)
+camera = cv2.VideoCapture(2)
 while True:
 
 	(grabber, frame) = camera.read()
