@@ -2,13 +2,13 @@
 
 
 # OpenCV code to track a balls trajectory along with its radius (in pixels)
-# Used to track the x, y and z  position of the ball with 2 cameras placed UNDER the ball and to a side of the ball
+# Used to track the x, y and z position of the ball with 2 cameras placed UNDER the ball and to a side of the ball
 
 
 import numpy as np
 import cv2
 import imutils
-# import time
+import time
 from collections import deque
 
 orange_lower = (10, .4*255, .6*255)
@@ -35,6 +35,9 @@ cameraOver = cv2.VideoCapture(1)
 # VideCapture(2) is webcam for the right side USB port of Dhruv's laptop - Camera to the side of the ball
 # Camera to the side of the ball will give us the z position of the ball in the frame of the Camera Under the ball
 
+zArr = [] # array to store consecutive z values
+velocityArr = []
+t2 = 0 # time to be updated each iteration
 
 while True:
 
@@ -84,6 +87,17 @@ while True:
 		mOver = cv2.moments(cOver)
 		centerOver = (int(mOver["m10"] / mOver["m00"]), int(mOver["m01"] / mOver["m00"]))
 
+		x = xUnder
+		y = yUnder
+		z = yOver
+
+		zArr.append(z)
+
+		t1 = time.time()
+		velocity = (zArr[-1] - zArr[-2]) / t1 - t2
+		t2 = t1	# Update t2 to calculate velocity in next iteration
+		velocityArr.append(velocity)
+
 		if radiusOver > 10:
 			cv2.circle(frameOver, (int(xOver), int(yOver)), int(radiusOver),(0, 255, 255), 2)
 			cv2.circle(frameOver, centerOver, 5, (0, 0, 255), -1)
@@ -101,7 +115,7 @@ while True:
 		# draw the connecting lines
 		thickness = int(np.sqrt(64 / float(i + 1)) * 2.5)
 		cv2.line(frameUnder, ptsUnder[i - 1], ptsUnder[i], (0, 0, 255), thickness) # print the line for balls trajectory
-		print(xUnder, yUnder)
+		# print(xUnder, yUnder)
 
 		# if(radius != 0 and poly(radius) != 0): # find moving average of the radius of the ball and the depth of the ball
 		# 	radiusArr.append(radius)
