@@ -1,5 +1,13 @@
 #include <math.h>
-#define motorInterfaceType 1
+#include <ros.h>
+#include <gemoetry_msgs/Twist.h>
+
+ros::NodeHandle nh;
+
+#define STEP1_DIR LOW
+#define STEP2_DIR LOW
+#define STEP3_DIR HIGH
+#define STEP4_DIR HIGH
 
 const int dirPin1 = 8;
 const int stepPin1 = 9;
@@ -25,6 +33,11 @@ volatile double stepper1_height = 0.0;
 volatile double stepper2_height = 0.0;
 volatile double stepper3_height = 0.0;
 volatile double stepper4_height = 0.0;
+volatile double x = 0.0;
+volatile double y = 0.0;
+volatile double z = 0.0;
+volatile double w = 0.0;
+
 
 void calculate_height(double angle_x, double angle_y) {
   
@@ -44,10 +57,22 @@ float invkin(double y){
     return abs(stepper_angle);
 }
 
+void messageCb(const geometry_msgs::Twist& msg)
+{
+  msg.linear.x = x;
+  msg.linear,y = y;
+  msg.linear.z = z;
+  msg.angular.z = vel;
+}
+
+ros::Subscriber<geometry_msgs::Twist> sub("ballTracker", &messageCb);
+
 int stepCount = 0;
 
 void setup(){
   Serial.begin(9600);
+  nh.initNode();
+  nh.subscribe(sub);
   pinMode(stepPin1, OUTPUT);
   pinMode(dirPin1, OUTPUT);
   pinMode(stepPin2, OUTPUT);
@@ -62,15 +87,19 @@ void setup(){
   digitalWrite(dirPin2, LOW);
   digitalWrite(dirPin3, HIGH);
   digitalWrite(dirPin4, HIGH);
+}
 
+void loop(){
 
+    digitalWrite(dirPin1, STEP1_DIR);
+    digitalWrite(dirPin2, STEP2_DIR);
+    digitalWrite(dirPin3, STEP3_DIR);
+    digitalWrite(dirPin4, STEP4_DIR);
+    
+    double thetax = asin((x*0.098)/(e *(1+e)*v*v))/2;
+    double thetay = asin((y*0.098)/(e *(1+e)*v*v))/2;
+    calculate_height(thetax,thetay);
 
-    double angle_x = (7*3.14)/180;
-    double angle_y = (7*3.14)/180;
-    calculate_height(angle_x, angle_y);
-
-    Serial.println(angle_x);
-    Serial.println(angle_y);
     
     double stepper1_angle = invkin(stepper1_height)+ 0.08726;
     double stepper2_angle = invkin(stepper2_height)+ 0.08726;
@@ -114,11 +143,48 @@ void setup(){
       digitalWrite(stepPin4, HIGH);
       delayMicroseconds(300);
       digitalWrite(stepPin4, LOW);
+    } 
+
+
+
+    // Reset to home position
+    
+    digitalWrite(dirPin1, !STEP1_DIR);
+    digitalWrite(dirPin2, !STEP2_DIR);
+    digitalWrite(dirPin3, !STEP3_DIR);
+    digitalWrite(dirPin4, !STEP4_DIR);
+
+
+    
+    for(int x = 0; x <= step1; x++)
+    {
+      digitalWrite(stepPin1, HIGH);
+      delayMicroseconds(300);
+      digitalWrite(stepPin1, LOW);
     }
   
-}
-
-void loop(){
-      
+    // Spin motor slowly
+    for(int x = 0; x <= step2; x++)
+    {
+      digitalWrite(stepPin2, HIGH);
+      delayMicroseconds(300);
+      digitalWrite(stepPin2, LOW);
+    }
   
+    // Spin motor slowly
+    for(int x = 0; x <= step3; x++)
+    {
+      digitalWrite(stepPin3, HIGH);
+      delayMicroseconds(300);
+      digitalWrite(stepPin3, LOW);
+    }
+    // Spin motor slowly
+    for(int x = 0; x <= step4; x++)
+    {
+      digitalWrite(stepPin4, HIGH);
+      delayMicroseconds(300);
+      digitalWrite(stepPin4, LOW);
+    } 
+  nh.spinOnce();
+  delay(200);
   }
