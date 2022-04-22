@@ -21,8 +21,8 @@ ptsOver = deque(maxlen=64)
 # 	pol = -4.46*10**-6*x**4 + 0.0015*x**3 - 0.183*x**2 + 9.26*x -129.5
 # 	return pol
 
-cameraUnder = cv2.VideoCapture(2)
-cameraOver = cv2.VideoCapture(1)
+cameraUnder = cv2.VideoCapture(0)
+cameraOver = cv2.VideoCapture(2)
 # VideCapture(1) is webcam for the left side USB port of Dhruv's laptop - Camera Under the ball
 # Camera under the ball is the global origin and it will give us the x and y position of the ball
 # VideCapture(2) is webcam for the right side USB port of Dhruv's laptop - Camera to the side of the ball
