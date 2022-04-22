@@ -29,7 +29,7 @@ cameraOver = cv2.VideoCapture(1)
 # Camera to the side of the ball will give us the z position of the ball in the frame of the Camera Under the ball
 
 
-ballParameter = (x, y, zArr, velocityArr, radiusArr) = (0, 0, [], [], [])
+ballParameter = (x, y, zArr, velocity, radiusArr) = (0, 0, [], 0, [])
 t2 = 0 # time to be updated each iteration
 
 while True:
@@ -62,7 +62,7 @@ while True:
 		# it to compute the minimum enclosing circle and
 		# centroid
 		cUnder = max(cntsUnder, key=cv2.contourArea)
-		((xUnder, yUnder), radiusUnder) = cv2.minEnclosingCircle(cUnder) # x,y coordinates and radius of the minimum enclosing circle
+		(xUnder, yUnder), radiusUnder = cv2.minEnclosingCircle(cUnder) # x,y coordinates and radius of the minimum enclosing circle
 		mUnder = cv2.moments(cUnder)
 		centerUnder = (int(mUnder["m10"] / mUnder["m00"]), int(mUnder["m01"] / mUnder["m00"]))
 
@@ -80,15 +80,15 @@ while True:
 		mOver = cv2.moments(cOver)
 		centerOver = (int(mOver["m10"] / mOver["m00"]), int(mOver["m01"] / mOver["m00"]))
 
-		x = xUnder
-		y = yUnder
+		# x = xUnder
+		# y = yUnder
 		z = yOver
 		zArr.append(z)
 
-		t1 = time.time()
-		velocity = (zArr[-1] - zArr[-2]) / t1 - t2
-		t2 = t1	# Update t2 to calculate velocity in next iteration
-		velocityArr.append(velocity)
+		# t1 = time.time()
+		# velocity = (zArr[-1] - zArr[-2]) / t1 - t2
+		# t2 = t1	# Update t2 to calculate velocity in next iteration
+		# velocityArr.append(velocity)
 
 		if radiusOver > 10:
 			cv2.circle(frameOver, (int(xOver), int(yOver)), int(radiusOver),(0, 255, 255), 2)
@@ -112,7 +112,8 @@ while True:
 		thickness = int(np.sqrt(64 / float(i + 1)) * 2.5)
 		cv2.line(frameOver, ptsOver[i - 1], ptsOver[i], (0, 0, 255), thickness)
 		print(xOver, yOver)
-
+	
+	print(velocity)
 	# show the frame to our screen
 	cv2.imshow("FrameUnder", frameUnder)
 	cv2.imshow("FrameOver", frameOver)
