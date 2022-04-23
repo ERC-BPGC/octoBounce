@@ -96,9 +96,12 @@ def ballInfo():
 				mOver = cv2.moments(cOver)
 				centerOver = (int(mOver["m10"] / mOver["m00"]), int(mOver["m01"] / mOver["m00"]))
 
-				ballParameter.linear.x = xUnder * 0.0264 # 0.026458333333333 is the conversion factor from pix/s to cm/s
-				ballParameter.linear.y = yUnder * 0.0264
-				ballParameter.linear.z = yOver * 0.0264
+				# ballParameter.linear.x = (xUnder-300) * 0.0264             # 0.026458333333333 is the conversion factor from pix/s to cm/s
+				# ballParameter.linear.y = (yUnder - 300)* 0.0264 
+				# ballParameter.linear.z = yOver * 0.0264 
+				ballParameter.linear.x = 2
+				ballParameter.linear.y = 2
+				ballParameter.linear.z = 2
 				zArr.append(ballParameter.linear.z)
 				
 				t1 = time.time()
@@ -149,9 +152,8 @@ def ballInfo():
 				highest = ballParameter.linear.z
 			v1 = v2
 
-			if round(ballParameter.linear.z, 2) == highest:
-				rospy.loginfo(ballParameter)
-				pub.publish(ballParameter)
+			rospy.loginfo(ballParameter)
+			pub.publish(ballParameter)
 			
 			rate.sleep()
 
