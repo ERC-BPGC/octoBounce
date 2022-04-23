@@ -42,6 +42,8 @@ def ballInfo():
 		t2 = 0 # time to be updated each iteration
 		xUnder = 0
 		yUnder = 0
+		highest = 0
+
 		while True:
 
 			(grabberUnder, frameUnder) = cameraUnder.read()
@@ -91,9 +93,9 @@ def ballInfo():
 				mOver = cv2.moments(cOver)
 				centerOver = (int(mOver["m10"] / mOver["m00"]), int(mOver["m01"] / mOver["m00"]))
 
-				ballParameter.linear.x = xUnder
-				ballParameter.linear.y = yUnder
-				ballParameter.linear.z = yOver
+				ballParameter.linear.x = xUnder * 0.0264 # 0.026458333333333 is the conversion factor from pix/s to cm/s
+				ballParameter.linear.y = yUnder * 0.0264
+				ballParameter.linear.z = yOver * 0.0264
 				zArr.append(ballParameter.linear.z)
 				
 				t1 = time.time()
@@ -107,7 +109,7 @@ def ballInfo():
 				t2 = t1	# Update t2 to calculate velocity in next iteration
 				# velocityArr.append(velocity)
 
-				ballParameter.angular.z = velocity * 0.026458333333333 # 0.026458333333333 is the conversion factor from pix/s to cm/s
+				ballParameter.angular.z = velocity * 0.026458333333333 
 
 				if radiusOver > 10:
 					cv2.circle(frameOver, (int(xOver), int(yOver)), int(radiusOver),(0, 255, 255), 2)
@@ -140,9 +142,12 @@ def ballInfo():
 			if key == ord('q'):
 				break
 			
-			rospy.loginfo(ballParameter)
-			pub.publish(ballParameter)
-			rate.sleep()
+
+			if velocity == highest - 0.098/2:
+				rospy.loginfo(ballParameter)
+				pub.publish(ballParameter)
+				rate.sleep()
+			
 
 
 		cameraUnder.release()
@@ -155,7 +160,3 @@ if __name__ == '__main__':
 		ballInfo()
 	except rospy.ROSInterruptException:
 		pass
-<<<<<<< HEAD
-=======
-
->>>>>>> 4e0646679f14f081f50fcf050d5a6c29313bad1c
